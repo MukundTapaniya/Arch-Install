@@ -3,12 +3,13 @@
 
 A comprehensive guide and scripts for installing Arch Linux, tailored for both beginners and advanced users.
 
+---
 ## Overview
 
 This repository provides step-by-step instructions and scripts to streamline the installation of Arch Linux. Whether you're new to Linux or an experienced user, this guide will help you set up Arch Linux effectively.
 
 Steps included to Install Arch Linux:
-* [Step 1: Connect to the internet](#step-1-connect-to-the-internet)
+* Step 1: Connect to the internet
 * Step 2 : Partitioning disk for installation
 * Step 3 : Mount the partitions
 * Step 4 : Installing the base system
@@ -19,11 +20,13 @@ Steps included to Install Arch Linux:
 * Step 9 : Bootloader setup
 * Step 10 : Post-installation
 
+---
 ### Prerequisites
 
 - Bootable arch linux pendrive
 - Stable internet connection (explained on step number 1)
 
+---
 ## Installation
 
 ### Step 1 : Connect to the internet
@@ -62,6 +65,7 @@ Steps included to Install Arch Linux:
     ping archlinux.org
     ```
 
+---
 ### Step 2 : Partitioning disk for installation
 
 To check for available drives: 
@@ -256,7 +260,7 @@ passwd
 
 #### or
 
-*    *(optional) if you don't want to put user in wheel group then,*
+* *(optional) if you don't want to put user in wheel group then,*
 
     ```bash
     useradd -m user_name
@@ -279,7 +283,7 @@ passwd
 
 #### or
 
-*(optional) If you haven't put the user in wheel group, then specify the permission of your username in following line*
+* (optional) If you haven't put the user in wheel group, then specify the permission of your username in following line*
 
     ```
     # User privilege specification
@@ -378,3 +382,15 @@ This step is for those who want to install a Desktop Environment. I will install
     ```
 
     ## Welcome to KDE Plasma!!
+
+  ---
+
+  ## 👤 About the Developer
+
+Hello! I'm Mukund Tapaniya, a passionate developer dedicated to creating efficient and user-friendly applications. With a strong background in web development, I love building systems that improve processes and enhance user experiences.
+
+- **GitHub**: [MukundTapaniya](https://github.com/MukundTapaniya)
+- **LinkedIn**: [Mukund Tapaniya](https://in.linkedin.com/in/mukund-tapaniya-296a63250)
+- **Email**: [mukundtapaniya47@gmail.com]
+
+Feel free to reach out if you have any questions, suggestions, or just want to connect!
