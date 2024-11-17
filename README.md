@@ -14,10 +14,10 @@ This repository provides step-by-step instructions and scripts to streamline the
 
 ## Installation
 
-### Step 1 - connect to the internet
+### Step 1 : Connect to the internet
 
  Connect wia the ethernet
-### or
+#### or
 
  Connect wia wifi using iwctl tool
 
@@ -50,7 +50,7 @@ This repository provides step-by-step instructions and scripts to streamline the
     ping archlinux.org
     ```
 
-### Step 2 - Partitioning disk for installation
+### Step 2 : Partitioning disk for installation
 
 To check for available drives: 
 ```bash
@@ -65,12 +65,14 @@ cfdisk /dev/sda
 
 Create three partitions of EFI boot manager, root partition and swap partition
 
+### Step 3 : Mount the partitions
+
 ```
 root@archiso ~ # lsblk
 NAME    MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
 archiso/airootfs
 sda      8:0    0   32G  0 disk
-├─sda1   8:1    0   100M  0 part
+├─sda1   8:1    0   100M 0 part
 ├─sda2   8:2    0    4G  0 part
 └─sda3   8:3    0 27.9G  0 part
 root@archiso ~ #
@@ -80,5 +82,228 @@ Here,
 - sda2 is swap partition (virtual memory).
 - sda3 is root partition.
 
-Paritions are still not intialized and not mounted, it can be done manually
+*Paritions are still not intialized and not mounted, it can be done manually*
 
+Firstly, format root partition by
+
+```bash
+mkfs.ext4 /dev/sda3
+```
+
+Then, format boot manager partition by,
+
+```bash
+mkfs.fat -F 32 /dev/sda1
+```
+
+Lastly, create swap partition by
+
+```bash
+mkswap /dev/sda2
+```
+*Its time to mount each partition*
+
+mount root partition with,
+
+```bash
+mount /dev/sda3 /mnt
+```
+ 
+Boot partition can be mounted by creating mount point directory with following commands:
+```bash
+mkdir -p /mnt/boot/efi
+```
+```bash
+mount /dev/sda1 /mnt/boot/efi
+```
+
+We don't need to mount swap partition, just turn it on with:
+
+```bash 
+swapon /dev/sda2
+```
+
+And, the final result should look like this
+
+```
+root@archiso ~ # lsblk
+NAME    MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+archiso/airootfs
+sda      8:0    0   32G  0 disk
+├─sda1   8:1    0   100M 0 part /mnt/boot/efi
+├─sda2   8:2    0    4G  0 part [SWAP]
+└─sda3   8:3    0 27.9G  0 part /mnt
+root@archiso ~ #
+```
+
+### Step 4 : Installing the base system
+
+Use pacstrap script to install the base package, Linux Kernal and firmware:
+
+```bash
+pacstrap -K /mnt base linux linux-firmware sof-firmware base-devel grub efibootmgr nano networkmanager
+```
+
+After entering this command, base arch system packages with its core will get installed in the root partition. It may take some time according to internet connection.
+
+************************
+
+Information of the file system can be found with genfstab with:
+
+```bash
+genfstab /mnt
+```
+You may see output look something like this:
+```
+root@archiso ~ # genfstab /mnt
+# UUID=4a806a2c-2fcf-4d3f-943e-10dc76aa4b43 /  ext4 rw,relatime                                0 1
+# UUID=20DA-C959                             /boot/efi  ufat rw,relatime,fmask=0022,dmask=0022, 0 2
+/dev/sda1                                                 shortname=mixed,utf8,errors=remount-ro
+# UUID=2d38df14-9f29-4a3e-b2ee-7f09ac6685a7  none       swap defaults                                0 0
+/dev/sda2
+```
+This information is on terminal, but we have to store it on out disk, it can be done via:
+
+```bash
+genfstab /mnt > /mnt/etc/fstab
+```
+
+*(optional) To ensure whether it is store or not:*
+
+```bash
+cat /mnt/etc/fstab
+```
+
+The base system is installed and stored on out disk.
+
+### Step 5 : Configuring the arch linux system
+We can now enter to our system with chroot
+```bash
+arch-chroot /mnt
+```
+
+- Configuration of the Time Zone
+    ```bash
+    ln -sf /usr/share/zoneinfo/Asia/Kolkata /etc/localtime
+    ```
+    check the date and time with "date" command.
+
+    Synchronize the hardware clock with
+    ```bash
+    hwclock --systohc
+    ```
+- Configuration of the Localization
+    ```bash
+    nano /etc/locale.gen
+    ```
+    I am going to use "en_US.UTF-8 UTF-8", use it by uncommenting the line. And save the file with CTRL+O to save and CTRL+X to exit.
+    
+    Check the locale with:
+    ```bash
+    locale-gen
+    ```
+    You should see output like this:
+    ```
+    Generating locales...
+    en_US.UTF-8... done
+    Generation complete.
+    ```
+    Again, specify the locale in /etc/locale.conf with following commands:
+    ```bash
+    nano /etc/locale.conf
+    ```
+    and paste following line on it:
+    ```bash
+    LANG=en_US.UTF-8
+    ```
+    once again, you can save it with CTRL+O and CTRL+X to exit.
+
+- Configuration of Hostname
+*Hostname : A hostname is a name used to identify a device on a network.*
+
+```bash
+nano /etc/hostname
+```
+Enter desired hostname and exit.
+set the password by,
+```bash
+passwd
+```
+### Step 6 : Adding a user in Arch Linux
+* Adding the user
+    ```bash
+    useradd -m -G wheel -s /bin/bash user_name
+    ```
+    Here, 
+
+    *-m means create a home directory.*
+
+    *-G means group is wheel*
+    
+    *user_name, put your desired username*
+
+#### or
+
+*    *(optional) if you don't want to put user in wheel group then,*
+
+    ```bash
+    useradd -m user_name
+    ```
+
+- Enter the user password with:
+    ```bash
+    passwd user_name
+    ```
+- For running sudo commands in user do following changes
+    ```bash
+    EDITOR=nano visudo
+    ```
+    inside the /etc/sudoers.tmp, you will find line
+    ```
+    # Uncomment to allow members of group wheel to execute any command
+    # %wheel ALL=(ALL) ALL
+    ```
+    uncomment it and we can use sudo command.
+
+#### or
+
+*(optional) If you haven't put the user in wheel group, then specify the permission of your username in following line*
+
+    ```
+    # User privilege specification
+    root ALL=(ALL) ALL
+    user_name ALL=(ALL) ALL
+    ```
+
+- To run command inside a user,
+    ```bash
+    su user_name
+    ```
+
+### Step 7 : Update the system and installing required packages
+
+* *Make sure you are in home user by writing "whoami", and you will see the name of user that you are currently logged in.*
+
+* *One more way to check the current user is you may see the Shell prompt some thing like*
+
+    ```bash
+    [mukund@archlinux ~]$
+    ```
+    *where mukund is my username and archlinux is my hostname*
+
+* It is good practice to update the system when you login first time in system. You can do it by,
+
+    ```bash
+    sudo pacman -Syu
+    ```
+    and enter your user password.
+
+
+### Step 8 : Enabling system services and daemons
+
+* Make sure you are in root privilege. It can be done via "sudo su"
+
+* Enable networkmanager with
+    ```bash
+    systemctl enable NetworkManager 
+    ```
