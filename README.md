@@ -31,7 +31,7 @@ Steps included to Install Arch Linux:
 
 ### Step 1 : Connect to the internet
 
- Connect wia the ethernet
+ Connect wia the ethernet (preferrable)
 #### or
 
  Connect wia wifi using iwctl tool
@@ -52,7 +52,7 @@ Steps included to Install Arch Linux:
     device wlan0 show
     ```
     ```bash
-    staiton wlan0 get-networks
+    station wlan0 get-networks
     ```
 - Connect to your wifi network with:
     ```bash
@@ -387,7 +387,7 @@ This step is for those who want to install a Desktop Environment. I will install
 
   ## 👤 About the Developer
 
-Hello! I'm Mukund Tapaniya, a passionate developer dedicated to creating efficient and user-friendly applications. With a strong background in web development, I love building systems that improve processes and enhance user experiences.
+Hello! I'm Mukund Tapaniya, a passionate developer dedicated to creating efficient and user-friendly applications. With a strong Interest in Linux and Artificial Intelligence, I love building systems that improve processes and enhance user experiences.
 
 - **GitHub**: [MukundTapaniya](https://github.com/MukundTapaniya)
 - **LinkedIn**: [Mukund Tapaniya](https://in.linkedin.com/in/mukund-tapaniya-296a63250)
