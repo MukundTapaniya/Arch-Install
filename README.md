@@ -7,10 +7,22 @@ A comprehensive guide and scripts for installing Arch Linux, tailored for both b
 
 This repository provides step-by-step instructions and scripts to streamline the installation of Arch Linux. Whether you're new to Linux or an experienced user, this guide will help you set up Arch Linux effectively.
 
+Steps included to Install Arch Linux:
+* [Step 1: Connect to the internet](#step-1-connect-to-the-internet)
+* Step 2 : Partitioning disk for installation
+* Step 3 : Mount the partitions
+* Step 4 : Installing the base system
+* Step 5 : Configuring the arch linux system
+* Step 6 : Adding a user in Arch Linux
+* Step 7 : Update the system and installing required packages
+* Step 8 : Enabling system services and daemons
+* Step 9 : Bootloader setup
+* Step 10 : Post-installation
+
 ### Prerequisites
 
 - Bootable arch linux pendrive
-- Stable internet connection (explained on step number )
+- Stable internet connection (explained on step number 1)
 
 ## Installation
 
@@ -34,10 +46,10 @@ This repository provides step-by-step instructions and scripts to streamline the
 - To connect to available network select preferred station with: 
 
     ```bash
-    device wlon0 show
+    device wlan0 show
     ```
     ```bash
-    staion wlan0 get-networks
+    staiton wlan0 get-networks
     ```
 - Connect to your wifi network with:
     ```bash
@@ -71,10 +83,10 @@ Create three partitions of EFI boot manager, root partition and swap partition
 root@archiso ~ # lsblk
 NAME    MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
 archiso/airootfs
-sda      8:0    0   32G  0 disk
-├─sda1   8:1    0   100M 0 part
-├─sda2   8:2    0    4G  0 part
-└─sda3   8:3    0 27.9G  0 part
+sda      8:0    0   931.5G  0 disk
+├─sda1   8:1    0   512M 0 part
+├─sda2   8:2    0    16G  0 part
+└─sda3   8:3    0 914.9G  0 part
 root@archiso ~ #
 ```
 Here,
@@ -129,10 +141,10 @@ And, the final result should look like this
 root@archiso ~ # lsblk
 NAME    MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
 archiso/airootfs
-sda      8:0    0   32G  0 disk
-├─sda1   8:1    0   100M 0 part /mnt/boot/efi
-├─sda2   8:2    0    4G  0 part [SWAP]
-└─sda3   8:3    0 27.9G  0 part /mnt
+sda      8:0    0   931.5G  0 disk
+├─sda1   8:1    0     512M  0 part /mnt/boot/efi
+├─sda2   8:2    0      16G  0 part [SWAP]
+└─sda3   8:3    0   914.9G  0 part /mnt
 root@archiso ~ #
 ```
 
@@ -307,3 +319,62 @@ passwd
     ```bash
     systemctl enable NetworkManager 
     ```
+* *(optional) You may want to install a login manager like lightdm or sddm, it can be done via the following commands:*
+    ```bash
+    sudo pacman -S lightdm
+    sudo pacman -S lightdm-gtk-greeter
+    sudo systemctl enable lightdm
+    sudo systemctl start lightdm
+    ```
+    *If you want a plain and minimal arch install it is advisable to use this login manager. But, we will install it when we set-up our desktop environment in further **step number 10**.*
+
+### Step 9 : Bootloader setup
+
+* We will use Grub as out Bootloader.
+* Again, make sure you are in root privileges and also in root directory which can be obtained by "cd".
+* You can install grub with following command: 
+    ```bash
+    grub-install /dev/sda
+    ```
+* Configure grub with:
+    ```bash
+    grub-mkconfig -o /boot/grub/grub.cfg
+    ```
+* Reboot
+
+
+## Congratulation, we have installed the Arch Linux.
+
+### Step 10 : Post-installation
+
+This step is for those who want to install a Desktop Environment. I will install KDE plasma as my desktop environment.
+
+* Firstly, log in to user and update the system with:
+    ```bash
+    sudo pacman -Syu
+    ```
+
+* To install a complete KDE Plasma Desktop Environment, use following command,
+
+    ```bash
+    sudo pacman -S plasma-meta kde-applications
+    ```
+    *Here,*
+
+     *plasma-meta will only install the core plasma*
+
+     *kde-applications will install all its applications and will provide a complete KDE Plasma experience*
+
+* Installing to the login display manager
+
+    ```bash
+    sudo systemctl enable sddm
+    ```
+    Now onward, at the time of boot, it will use sddm as login manager
+
+    However, to access it now, we can use following command:
+    ```bash
+    sudo systemctl enable --now sddm
+    ```
+
+    ## Welcome to KDE Plasma!!
